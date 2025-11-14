@@ -59,6 +59,12 @@ pnpm start:prod
 
 The server will be running on the port specified in your `.env` file.
 
+## API Documentation
+
+Swagger documentation is available at: `http://localhost:{BE_PORT}/docs`
+
+(Replace `{BE_PORT}` with the port number you set in your `.env` file)
+
 ## Stopping the Server
 
 To stop the database:

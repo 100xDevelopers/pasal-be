@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -14,9 +15,20 @@ async function bootstrap() {
     credentials: true,
   });
 
+  const config = new DocumentBuilder()
+    .setTitle('Pasal API Documentation')
+    .setDescription('Backend API documentation')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
   const port = configService.get<number>('BE_PORT') ?? 7000;
   await app.listen(port);
+
   Logger.log(`Server is running on port ${port}`);
+  Logger.log(`Swagger docs available at http://localhost:${port}/docs`);
 }
 bootstrap().catch((error) => {
   Logger.error(error);
