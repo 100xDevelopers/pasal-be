@@ -2,12 +2,12 @@ generator client {
   provider = "prisma-client"
   output   = "../src/generated"
 }
-}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id           String   @unique @default(cuid())
   email        String   @unique
@@ -21,6 +21,7 @@ model User {
   @@index([role])
   @@index([email])
 }
+
 enum Provider {
   LOCAL
   GOOGLE
