@@ -1,15 +1,18 @@
+import { config } from 'dotenv';
+import { expand } from 'dotenv-expand';
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
+import cookieParser from 'cookie-parser';
+expand(config()); // for dynamic env vars
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
 
   const configService = app.get<ConfigService>(ConfigService);
-
+  app.use(cookieParser());
   app.enableCors({
     origin: configService.get<string>('PUBLIC_WEB_URL'),
     credentials: true,
