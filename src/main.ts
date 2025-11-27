@@ -1,19 +1,32 @@
+import { config } from 'dotenv';
+import { expand } from 'dotenv-expand';
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
+import cookieParser from 'cookie-parser';
+expand(config()); // for dynamic env vars
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
 
   const configService = app.get<ConfigService>(ConfigService);
-
+  app.use(cookieParser());
   app.enableCors({
     origin: configService.get<string>('PUBLIC_WEB_URL'),
     credentials: true,
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // remove unwanted values
+      transform: true, // transform to dto objects
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Pasal API Documentation')
