@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LoginDto {
   @ApiProperty({
     description: 'User email address',
-    example: 'sujaldon@gmail.com',
+    example: 'sujal@gmail.com',
     format: 'email',
   })
   @IsEmail()
@@ -13,7 +13,7 @@ export class LoginDto {
 
   @ApiProperty({
     description: 'User password',
-    example: 'Password123',
+    example: '123456',
     minLength: 6,
   })
   @IsString()

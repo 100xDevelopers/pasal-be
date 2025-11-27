@@ -5,7 +5,7 @@ import { Role } from '@prisma/client';
 export class CreateUserDto {
   @ApiProperty({
     description: 'User full name',
-    example: 'Sujal Don',
+    example: 'sujal don',
     minLength: 1,
   })
   @IsString()
@@ -14,7 +14,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'User email address',
-    example: 'sujal.don@example.com',
+    example: 'sujal@gmail.com',
     format: 'email',
   })
   @IsEmail({}, { message: 'Invalid email address' })
@@ -22,7 +22,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'User password',
-    example: 'Password123',
+    example: '123456',
     minLength: 6,
   })
   @IsString()
