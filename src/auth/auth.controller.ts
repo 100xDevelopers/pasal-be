@@ -6,6 +6,7 @@ import {
   Request,
   Get,
   Res,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,7 +17,7 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { CreateUserDto } from '@src/user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
 import { Public } from './decorators/public.decorator';
@@ -112,6 +113,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(200)
   @ApiOperation({
     summary: 'Login user',
     description:
@@ -160,7 +162,7 @@ export class AuthController {
       'Get new access and refresh tokens using the refresh token from cookies',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Tokens successfully refreshed',
     schema: {
       example: {
