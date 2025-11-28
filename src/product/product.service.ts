@@ -9,16 +9,31 @@ export class ProductService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
-    this.logger.log(`Creating product: ${createProductDto.name}`);
+  async create(createProductDto: CreateProductDto, userId: string) {
+    this.logger.log(
+      `Creating product: ${createProductDto.name} for user: ${userId}`,
+    );
     return await this.prisma.product.create({
-      data: createProductDto,
+      data: {
+        ...createProductDto,
+        userId,
+      },
     });
   }
 
   async findAll() {
-    this.logger.log('Fetching all products');
+    this.logger.log(`Fetching all products`);
     return await this.prisma.product.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async findByUserId(userId: string) {
+    this.logger.log(`Fetching products for user: ${userId}`);
+    return await this.prisma.product.findMany({
+      where: { userId },
       orderBy: {
         createdAt: 'desc',
       },
@@ -38,18 +53,18 @@ export class ProductService {
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
-    this.logger.log(`Updating product with id: ${id}`);
+  async update(id: string, updateProductDto: UpdateProductDto, userId: string) {
+    this.logger.log(`User ${userId} updating product with id: ${id}`);
     return await this.prisma.product.update({
-      where: { id },
+      where: { id, userId },
       data: updateProductDto,
     });
   }
 
-  async remove(id: string) {
-    this.logger.log(`Removing product with id: ${id}`);
+  async remove(id: string, userId: string) {
+    this.logger.log(`User ${userId} removing product with id: ${id}`);
     return await this.prisma.product.delete({
-      where: { id },
+      where: { id, userId },
     });
   }
 }

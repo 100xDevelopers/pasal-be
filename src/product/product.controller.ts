@@ -18,6 +18,7 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Roles } from '@src/auth/decorators/roles.decorator';
+import { CurrentUser } from '@src/auth/decorators/current-user.decorator';
 import { Role } from '@prisma/client';
 
 @ApiTags('Products')
@@ -54,8 +55,11 @@ export class ProductController {
     status: 403,
     description: 'Forbidden - Insufficient permissions',
   })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  create(
+    @Body() createProductDto: CreateProductDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.productService.create(createProductDto, userId);
   }
 
   @Get()
@@ -85,6 +89,36 @@ export class ProductController {
   })
   findAll() {
     return this.productService.findAll();
+  }
+
+  @Get('my-products')
+  @ApiOperation({
+    summary: 'Get my products',
+    description: 'Retrieve all products created by the authenticated user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of user products',
+    schema: {
+      example: [
+        {
+          id: 'cm3xrh9qu0000kkj21l5m7m0z',
+          userId: 'cm3xrh9qu0000kkj21l5m7m0a',
+          name: 'Wireless Mouse',
+          category: 'Electronics',
+          description: 'High-quality wireless mouse with ergonomic design',
+          createdAt: '2025-11-27T12:00:00.000Z',
+          updatedAt: '2025-11-27T12:00:00.000Z',
+        },
+      ],
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  findMyProducts(@CurrentUser('id') userId: string) {
+    return this.productService.findByUserId(userId);
   }
 
   @Get(':id')
@@ -160,8 +194,12 @@ export class ProductController {
     status: 403,
     description: 'Forbidden - Insufficient permissions',
   })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.productService.update(id, updateProductDto, userId);
   }
 
   @Delete(':id')
@@ -201,7 +239,7 @@ export class ProductController {
     status: 403,
     description: 'Forbidden - Only OWNER can delete products',
   })
-  remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+  remove(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.productService.remove(id, userId);
   }
 }
