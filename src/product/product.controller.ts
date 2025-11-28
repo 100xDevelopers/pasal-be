@@ -40,6 +40,7 @@ export class ProductController {
       example: {
         id: 'cm3xrh9qu0000kkj21l5m7m0z',
         name: 'Wireless Mouse',
+        userId: 'cm3xrh9qu0000kkj21l5m7m0a',
         category: 'Electronics',
         description: 'High-quality wireless mouse with ergonomic design',
         createdAt: '2025-11-27T12:00:00.000Z',
@@ -75,6 +76,7 @@ export class ProductController {
         {
           id: 'cm3xrh9qu0000kkj21l5m7m0z',
           name: 'Wireless Mouse',
+          userId: 'cm3xrh9qu0000kkj21l5m7m0a',
           category: 'Electronics',
           description: 'High-quality wireless mouse with ergonomic design',
           createdAt: '2025-11-27T12:00:00.000Z',
@@ -139,6 +141,7 @@ export class ProductController {
         id: 'cm3xrh9qu0000kkj21l5m7m0z',
         name: 'Wireless Mouse',
         category: 'Electronics',
+        userId: 'cm3xrh9qu0000kkj21l5m7m0a',
         description: 'High-quality wireless mouse with ergonomic design',
         createdAt: '2025-11-27T12:00:00.000Z',
         updatedAt: '2025-11-27T12:00:00.000Z',
@@ -175,6 +178,7 @@ export class ProductController {
       example: {
         id: 'cm3xrh9qu0000kkj21l5m7m0z',
         name: 'Updated Wireless Mouse',
+        userId: 'cm3xrh9qu0000kkj21l5m7m0a',
         category: 'Electronics',
         description: 'Updated description',
         createdAt: '2025-11-27T12:00:00.000Z',
@@ -220,6 +224,7 @@ export class ProductController {
       example: {
         id: 'cm3xrh9qu0000kkj21l5m7m0z',
         name: 'Wireless Mouse',
+        userId: 'cm3xrh9qu0000kkj21l5m7m0a',
         category: 'Electronics',
         description: 'High-quality wireless mouse with ergonomic design',
         createdAt: '2025-11-27T12:00:00.000Z',
