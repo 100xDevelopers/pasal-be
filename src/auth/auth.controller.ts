@@ -162,7 +162,7 @@ export class AuthController {
       'Get new access and refresh tokens using the refresh token from cookies',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Tokens successfully refreshed',
     schema: {
       example: {

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@src/prisma/prisma.service';
 import { hash, verify } from 'argon2';
 @Injectable()
 export class UserService {

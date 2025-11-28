@@ -17,7 +17,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from '@src/auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 
 @ApiTags('Products')
