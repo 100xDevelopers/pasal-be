@@ -7,29 +7,49 @@ datasource db {
 }
 
 model User {
-  id           String    @unique @default(cuid())
-  email        String    @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
   password     String?
   name         String
   refreshToken String?
-  role         Role      @default(OWNER)
-  provider     Provider  @default(LOCAL)
-  products     Product[]
+  role         Role     @default(OWNER)
+  provider     Provider @default(LOCAL)
+  stores       Store[]
 
   @@index([id])
   @@index([role])
   @@index([email])
 }
 
+model Store {
+  id          String    @id @default(cuid())
+  subdomain   String    @unique
+  name        String
+  description String?
+  logo        String?
+  isActive    Boolean   @default(true)
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([subdomain])
+  @@index([ownerId])
+}
+
 model Product {
-  id          String   @unique @default(cuid())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId      String
+  id          String   @id @default(cuid())
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId     String
   name        String
   category    String
   description String?
+  price       Decimal  @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 enum Provider {
