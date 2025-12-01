@@ -34,9 +34,6 @@ const RESERVED_SUBDOMAINS = [
 export class StoreService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Find a store by its subdomain (for public storefront access)
-   */
   async findBySubdomain(subdomain: string) {
     const store = await this.prisma.store.findUnique({
       where: { subdomain },
@@ -46,7 +43,11 @@ export class StoreService {
             id: true,
             name: true,
             email: true,
+            role: true,
           },
+        },
+        products: {
+          orderBy: { createdAt: 'desc' },
         },
       },
     });
@@ -62,28 +63,16 @@ export class StoreService {
     return store;
   }
 
-  /**
-   * Get products for a store by subdomain (public access)
-   */
   async getStoreProducts(subdomain: string) {
     const store = await this.findBySubdomain(subdomain);
-
-    return this.prisma.product.findMany({
-      where: { storeId: store.id },
-      orderBy: { createdAt: 'desc' },
-    });
+    return store.products;
   }
 
-  /**
-   * Check if a subdomain is available
-   */
   async isSubdomainAvailable(subdomain: string): Promise<boolean> {
-    // Check reserved list
     if (RESERVED_SUBDOMAINS.includes(subdomain.toLowerCase())) {
       return false;
     }
 
-    // Check database
     const count = await this.prisma.store.count({
       where: { subdomain: subdomain.toLowerCase() },
     });
@@ -91,26 +80,31 @@ export class StoreService {
     return count === 0;
   }
 
-  /**
-   * Create a new store for a user
-   */
   async create(userId: string, createStoreDto: CreateStoreDto) {
     const subdomain = createStoreDto.subdomain.toLowerCase();
 
-    // Validate subdomain availability
-    const available = await this.isSubdomainAvailable(subdomain);
-    if (!available) {
-      throw new ConflictException(
-        `Subdomain "${subdomain}" is already taken or reserved`,
-      );
-    }
+    return this.prisma.$transaction(async (tx) => {
+      if (RESERVED_SUBDOMAINS.includes(subdomain)) {
+        throw new ConflictException(`Subdomain "${subdomain}" is reserved`);
+      }
 
-    return this.prisma.store.create({
-      data: {
-        ...createStoreDto,
-        subdomain,
-        ownerId: userId,
-      },
+      const existing = await tx.store.findUnique({
+        where: { subdomain },
+      });
+
+      if (existing) {
+        throw new ConflictException(
+          `Subdomain "${subdomain}" is already taken`,
+        );
+      }
+
+      return tx.store.create({
+        data: {
+          ...createStoreDto,
+          subdomain,
+          ownerId: userId,
+        },
+      });
     });
   }
 
@@ -134,7 +128,7 @@ export class StoreService {
    */
   async findOne(id: string, userId: string) {
     const store = await this.prisma.store.findUnique({
-      where: { id },
+      where: { id, ownerId: userId },
       include: {
         _count: {
           select: { products: true },
@@ -146,10 +140,6 @@ export class StoreService {
       throw new NotFoundException('Store not found');
     }
 
-    if (store.ownerId !== userId) {
-      throw new ForbiddenException('You do not own this store');
-    }
-
     return store;
   }
 
@@ -157,24 +147,24 @@ export class StoreService {
    * Update a store
    */
   async update(id: string, userId: string, updateStoreDto: UpdateStoreDto) {
-    // Verify ownership
-    await this.findOne(id, userId);
-
-    return this.prisma.store.update({
-      where: { id },
+    const store = await this.prisma.store.update({
+      where: { id, ownerId: userId },
       data: updateStoreDto,
     });
+
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    return store;
   }
 
   /**
    * Delete a store
    */
   async remove(id: string, userId: string) {
-    // Verify ownership
-    await this.findOne(id, userId);
-
     return this.prisma.store.delete({
-      where: { id },
+      where: { id, ownerId: userId },
     });
   }
 }
