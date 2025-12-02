@@ -80,7 +80,7 @@ export class StoreService {
     return count === 0;
   }
 
-  async create(userId: string, createStoreDto: CreateStoreDto) {
+  create(userId: string, createStoreDto: CreateStoreDto) {
     const subdomain = createStoreDto.subdomain.toLowerCase();
 
     return this.prisma.$transaction(async (tx) => {
@@ -111,7 +111,7 @@ export class StoreService {
   /**
    * Get all stores owned by a user
    */
-  async findAllByOwner(userId: string) {
+  findAllByOwner(userId: string) {
     return this.prisma.store.findMany({
       where: { ownerId: userId },
       include: {
@@ -162,7 +162,7 @@ export class StoreService {
   /**
    * Delete a store
    */
-  async remove(id: string, userId: string) {
+  remove(id: string, userId: string) {
     return this.prisma.store.delete({
       where: { id, ownerId: userId },
     });
