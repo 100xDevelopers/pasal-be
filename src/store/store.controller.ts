@@ -95,7 +95,7 @@ export class StoreController {
     @CurrentUser('id') userId: string,
     @Body() createStoreDto: CreateStoreDto,
   ) {
-    return this.storeService.create(userId, createStoreDto);
+    return await this.storeService.create(userId, createStoreDto);
   }
 
   /**
@@ -106,7 +106,7 @@ export class StoreController {
   @ApiOperation({ summary: 'Get all stores owned by current user' })
   @ApiResponse({ status: 200, description: 'Stores returned' })
   async findAll(@CurrentUser('id') userId: string) {
-    return this.storeService.findAllByOwner(userId);
+    return await this.storeService.findAllByOwner(userId);
   }
 
   /**
@@ -147,6 +147,6 @@ export class StoreController {
   @ApiParam({ name: 'id', description: 'Store ID' })
   @ApiResponse({ status: 200, description: 'Store deleted' })
   async remove(@Param('id') id: string, @CurrentUser('id') userId: string) {
-    return this.storeService.remove(id, userId);
+    return await this.storeService.remove(id, userId);
   }
 }
