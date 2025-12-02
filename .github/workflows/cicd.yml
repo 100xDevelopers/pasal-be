@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+# Triggers
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # Check out the repository code
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4 # Set up pnpm (reads version from package.json)
+        with:
+          version: 9 # Specify pnpm version (change to your version)
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3 # Set up Node.js version
+        with:
+          node-version: 22
+          cache: 'pnpm' # Cache pnpm dependencies for faster builds
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # Install dependencies according to pnpm-lock.yaml
+
+      - name: Lint
+        run: pnpm run lint # Run ESLint to check code quality
+
+      - name: Test
+        run: pnpm test # Run unit tests
+
+      - name: Build
+        run: pnpm run build # Build the NestJS application
